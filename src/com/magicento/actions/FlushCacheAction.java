@@ -30,6 +30,10 @@ public class FlushCacheAction extends MagicentoPhpActionAbstract
                     "            Mage_System_Dirs::rm($cache_dir);" +
                     "        }"+
                     "    }" +
+                    "}" +
+                    "if(Mage::helper('varnishcache')->isEnabled()){" +
+                    "    $domains = Mage::helper('varnishcache/cache')->getStoreDomainList(0);" +
+                    "    Mage::getModel('varnishcache/control')->clean($domains, '.*', '.*');" +
                     "}";
 
             MagicentoSettings settings = MagicentoSettings.getInstance(getProject());
@@ -45,6 +49,10 @@ public class FlushCacheAction extends MagicentoPhpActionAbstract
                                 "Enterprise_PageCache_Model_Cache::getCacheInstance()->clean(Enterprise_PageCache_Model_Processor::CACHE_TAG);"+
                                 "Mage::app()->getCacheInstance()->cleanType('full_page');"+
                                 "}"+
+                        "if(Mage::helper('varnishcache')->isEnabled()){" +
+                        "$domains = Mage::helper('varnishcache/cache')->getStoreDomainList(0);" +
+                        "Mage::getModel('varnishcache/control')->clean($domains, '.*', '.*');" +
+                        "}" +
                                 removeFPC+
                                 "echo '1';";
                 String result = magicento.executePhpWithMagento(phpCode);
